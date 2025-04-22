@@ -5,4 +5,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.scss', '~/assets/css/main.css'],
   modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxt/image', '@vueuse/nuxt', '@pinia/nuxt'],
   plugins: ['~/plugins/initBreeds.ts'],
+  ui: {
+    colorMode: false,
+  },
 });

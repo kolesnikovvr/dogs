@@ -6,8 +6,5 @@ export default defineNuxtRouteMiddleware((to) => {
 
   if (!breeds.includes(to.params.breed as string)) {
     return navigateTo('/', { replace: true });
-  } else {
-    store.dogs = [];
-    store.fetchBreedDogs(to.params.breed as string);
   }
 });

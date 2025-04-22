@@ -5,7 +5,7 @@ export const useMyDogsStore = defineStore('myDogs', {
   state: () => ({
     dogs: [] as string[],
     breeds: [] as string[],
-    favourites: localStorage.getItem('favourites') ? (JSON.parse(localStorage.getItem('favourites') as string) as string[]) : ([] as string[]),
+    favourites: [] as string[],
   }),
   getters: {
     getDogs: (state) => state.dogs,
@@ -13,6 +13,8 @@ export const useMyDogsStore = defineStore('myDogs', {
   },
   actions: {
     async fetchBreeds() {
+      if (this.breeds.length) return;
+
       try {
         const response = await axios.get('https://dog.ceo/api/breeds/list/all');
         this.breeds = Object.keys(response.data.message);
@@ -24,25 +26,35 @@ export const useMyDogsStore = defineStore('myDogs', {
       try {
         const response = await axios.get('https://dog.ceo/api/breeds/image/random/20');
         this.dogs = [...this.dogs, ...response.data.message];
+        return this.dogs;
       } catch (error) {
         console.error(error);
       }
     },
     async fetchBreedDogs(breed: string) {
       try {
-        const response = await axios.get(`https://dog.ceo/api/breed/${breed}/images`);
+        const response = await axios.get(`https://dog.ceo/api/breed/${breed}/images/random/20`);
         this.dogs = [...this.dogs, ...response.data.message];
       } catch (error) {
         console.error(error);
       }
     },
-    async addToFavourites(dog: string) {
+    addToFavourites(dog: string) {
       this.favourites.push(dog);
-      localStorage.setItem('favourites', JSON.stringify(this.favourites));
+      if (import.meta.client) {
+        localStorage.setItem('favourites', JSON.stringify(this.favourites));
+      }
     },
-    async removeFromFavourites(dog: string) {
+    removeFromFavourites(dog: string) {
       this.favourites = this.favourites.filter((fav: string) => fav !== dog);
-      localStorage.setItem('favourites', JSON.stringify(this.favourites));
+      if (import.meta.client) {
+        localStorage.setItem('favourites', JSON.stringify(this.favourites));
+      }
+    },
+    initializeFavourites() {
+      if (import.meta.client) {
+        this.favourites = JSON.parse(localStorage.getItem('favourites') || '[]');
+      }
     },
   },
 });
