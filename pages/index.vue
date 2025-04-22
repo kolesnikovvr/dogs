@@ -26,6 +26,7 @@
       try {
         await store.fetchRandomDogs();
       } finally {
+        store.isSort = false;
         setTimeout(() => (isLoading.value = false), 100);
       }
     },

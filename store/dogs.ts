@@ -6,6 +6,8 @@ export const useMyDogsStore = defineStore('myDogs', {
     dogs: [] as string[],
     breeds: [] as string[],
     favourites: [] as string[],
+    beforeSort: [] as string[],
+    isSort: false,
   }),
   getters: {
     getDogs: (state) => state.dogs,
@@ -54,6 +56,18 @@ export const useMyDogsStore = defineStore('myDogs', {
     initializeFavourites() {
       if (import.meta.client) {
         this.favourites = JSON.parse(localStorage.getItem('favourites') || '[]');
+      }
+    },
+    sortDogsBreed() {
+      if (this.isSort) {
+        this.beforeSort = [...this.dogs];
+        this.dogs.sort((a, b) => {
+          const partA = a.split('/')[4].split('-')[0];
+          const partB = b.split('/')[4].split('-')[0];
+          return partA.localeCompare(partB);
+        });
+      } else {
+        this.dogs = [...this.beforeSort];
       }
     },
   },

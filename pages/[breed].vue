@@ -22,7 +22,12 @@
   store.dogs = [];
 
   function noMoreContent() {
-    return images.value.length >= 1000;
+    if (images.value.length >= 1000) {
+      return true;
+    } else if (store.dogs.length < 20 && store.dogs.length > 0) {
+      return false;
+    }
+    return false;
   }
 
   useInfiniteScroll(

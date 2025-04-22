@@ -31,7 +31,7 @@
     },
   });
 
-  const breed = capitalizeFirstLetter(props.src.split('/')[4].split('-')[0]);
+  const breed = computed(() => capitalizeFirstLetter(props.src.split('/')[4].split('-')[0]));
   const store = useMyDogsStore();
   const isLoaded = ref(false);
   const open = ref(false);

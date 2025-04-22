@@ -5,16 +5,20 @@
         <NuxtLink to="/" class="layout__link main">ПЁСЕЛЬ</NuxtLink>
         <NuxtLink to="/favourites" class="layout__link favourites" :class="{ active: path === '/favourites' }">Избранные пёсели</NuxtLink>
       </nav>
-      <USelectMenu
-        v-model="value"
-        placeholder="Все породы"
-        :search-input="{
-          placeholder: 'Поиск',
-          icon: 'i-lucide-search',
-        }"
-        :items="items"
-        class="layout__select w-full max-w-[500px]"
-      />
+      <div class="layout__bottom" :class="{ flex_end: path !== '/' }">
+        <USwitch v-if="path === '/'" v-model="sort" label="Сортировать по алфавиту" @change="onSwitchChange = !onSwitchChange" />
+
+        <USelectMenu
+          v-model="value"
+          placeholder="Все породы"
+          :search-input="{
+            placeholder: 'Поиск',
+            icon: 'i-lucide-search',
+          }"
+          :items="items"
+          class="w-full max-w-[500px]"
+        />
+      </div>
     </header>
     <main class="layout__main">
       <slot />
@@ -30,6 +34,9 @@
   const path = computed(() => route.path);
   const items = store.getBreeds;
   const value = ref(null);
+  const sort = ref(false);
+  const onSwitchChange = ref(false);
+  const storeIsSort = computed(() => store.isSort);
 
   watch(value, (newValue) => {
     navigateTo(newValue);
@@ -38,6 +45,17 @@
   watch(path, (newValue) => {
     if (newValue === '/') {
       value.value = null;
+    }
+  });
+
+  watch(onSwitchChange, () => {
+    store.isSort = sort.value;
+    store.sortDogsBreed();
+  });
+
+  watch(storeIsSort, (newValue) => {
+    if (!newValue && sort.value) {
+      sort.value = store.isSort;
     }
   });
 
@@ -75,6 +93,18 @@
       align-items: center;
       gap: 20px;
       width: 100%;
+    }
+
+    .layout__bottom {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+
+      &.flex_end {
+        justify-content: flex-end;
+      }
     }
 
     .layout__link {
